@@ -1,0 +1,48 @@
+@page
+@model TourManagement.Web.Pages.Tours.IndexModel
+@{
+    ViewData["Title"] = "Tours";
+}
+
+<h1>Tours</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New Tour</a>
+</p>
+
+@if (Model.Tours == null || !Model.Tours.Any())
+{
+    <div class="alert alert-info">No tours found.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tour Name</th>
+                <th>Place</th>
+                <th>Days</th>
+                <th>Price</th>
+                <th>Locations</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tour in Model.Tours)
+            {
+                <tr>
+                    <td>@tour.TourName</td>
+                    <td>@tour.Place</td>
+                    <td>@tour.Days</td>
+                    <td>@tour.Price.ToString("C")</td>
+                    <td>@tour.Locations</td>
+                    <td>
+                        <a asp-page="Details" asp-route-id="@tour.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-page="Edit" asp-route-id="@tour.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-page="Delete" asp-route-id="@tour.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
