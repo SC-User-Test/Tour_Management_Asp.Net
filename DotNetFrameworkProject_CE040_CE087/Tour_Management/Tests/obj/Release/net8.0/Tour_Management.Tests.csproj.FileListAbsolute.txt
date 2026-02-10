@@ -1,0 +1,6 @@
+/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087/Tour_Management/Tests/obj/Release/net8.0/Tour_Management.Tests.csproj.AssemblyReference.cache
+/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087/Tour_Management/Tests/obj/Release/net8.0/Tour_Management.Tests.GeneratedMSBuildEditorConfig.editorconfig
+/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087/Tour_Management/Tests/obj/Release/net8.0/Tour_Management.Tests.AssemblyInfoInputs.cache
+/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087/Tour_Management/Tests/obj/Release/net8.0/Tour_Management.Tests.AssemblyInfo.cs
+/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087/Tour_Management/Tests/obj/Release/net8.0/Tour_Management.Tests.csproj.CoreCompileInputs.cache
+/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087/Tour_Management/Tests/obj/Release/net8.0/Tour_Management.Tests.sourcelink.json

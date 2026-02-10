@@ -1,0 +1,71 @@
+{
+  "assessmentId": "build-compilation-2026-02-10",
+  "summary": {
+    "totalIssues": 1,
+    "issuesFixed": 0,
+    "issuesFailed": 1,
+    "issuesSkipped": 0,
+    "filesModified": 1,
+    "buildStatus": "FAILURE",
+    "successRate": 0.0,
+    "status": "failed"
+  },
+  "issues": [],
+  "fixes": [],
+  "failedIssues": [
+    {
+      "id": "issue-1",
+      "title": "ASP.NET Web Forms incompatible with .NET 8",
+      "category": "business-logic-required",
+      "severity": "critical",
+      "filePath": "Tour_Management/Tour_Management.csproj",
+      "failureReason": "This is a legacy ASP.NET Web Forms application (System.Web.UI) that cannot be directly migrated to .NET 8 without significant application architecture changes",
+      "errorDetails": "114 compilation errors - System.Web.UI namespace does not exist in .NET 8. ASP.NET Web Forms is not supported in .NET Core/.NET 5+",
+      "manualFixRequired": true,
+      "suggestedApproach": "This requires a full application migration strategy: 1) Keep on .NET Framework 4.7.2 with modern tooling, OR 2) Rewrite to ASP.NET Core Razor Pages/MVC/Blazor, OR 3) Use incremental migration with SystemWebAdapters (requires significant code refactoring)"
+    }
+  ],
+  "buildConfiguration": {
+    "buildType": "dotnet",
+    "dotnetVersion": "net4.7.2-to-net8.0-attempted",
+    "buildToolVersion": "10.0.102",
+    "issuesFound": [
+      "Original project targets .NET Framework 4.7.2",
+      "Uses legacy ASP.NET Web Forms (System.Web.UI)",
+      "Attempted migration to .NET 8 SDK-style project",
+      "System.Web.UI not available in .NET 8"
+    ],
+    "fixesApplied": [
+      "Converted to SDK-style project format",
+      "Changed target framework to net8.0",
+      "Added SystemWebAdapters packages (insufficient for Web Forms)"
+    ]
+  },
+  "dependencies": {
+    "issuesFixed": [],
+    "issuesRemaining": [
+      {
+        "packageId": "System.Web.UI",
+        "version": "N/A",
+        "issue": "System.Web.UI namespace not available in .NET Core/.NET 5+",
+        "reason": "ASP.NET Web Forms is a .NET Framework-only technology that requires complete application rewrite for .NET Core/.NET 8"
+      }
+    ]
+  },
+  "recommendations": [
+    "CRITICAL: This is an ASP.NET Web Forms application that cannot compile on .NET 8 without complete application migration",
+    "Option 1: Keep application on .NET Framework 4.7.2 or upgrade to 4.8 (no code changes needed)",
+    "Option 2: Full rewrite to ASP.NET Core (Razor Pages, MVC, or Blazor) - requires significant development effort",
+    "Option 3: Incremental migration using SystemWebAdapters + extensive refactoring of all Web Forms pages",
+    "This is NOT a build configuration issue - it requires business logic/application architecture changes",
+    "Project file has been modified to SDK-style .NET 8 format but code is incompatible"
+  ],
+  "metadata": {
+    "projectPath": "/modernize-data/studio-data/TNT1001/APP1425/transformed-code/480/studio-workspace/C123/DotNetFrameworkProject_CE040_CE087",
+    "buildType": "dotnet",
+    "dotnetVersion": "net8.0",
+    "timestamp": "2026-02-10T10:10:00Z",
+    "executionTimeMs": 5000,
+    "claudeModel": "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+  }
+}
