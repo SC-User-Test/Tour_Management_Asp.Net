@@ -2,7 +2,6 @@ using TourManagement.Domain.DTOs;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using TourManagement.Domain.DTOs;
 using TourManagement.Domain.Interfaces.Services;
 
 namespace TourManagement.Web.Pages.Tours;
