@@ -51,7 +51,7 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
             .HasColumnName("pic");
 
         builder.Property(t => t.CreatedDate)
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("NOW()");
 
         builder.Property(t => t.IsActive)
             .HasDefaultValue(true);

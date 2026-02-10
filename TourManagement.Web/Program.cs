@@ -21,9 +21,20 @@ builder.Host.UseSerilog();
 // Add services to the container
 builder.Services.AddRazorPages();
 
-// Configure DbContext
+// Configure DbContext with PostgreSQL
 builder.Services.AddDbContext<TourManagementDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorCodesToAdd: null);
+            npgsqlOptions.MigrationsHistoryTable("__efmigrations_history", "public");
+        })
+        .UseSnakeCaseNamingConvention();
+});
 
 // Register repositories
 builder.Services.AddScoped<ITourRepository, TourRepository>();

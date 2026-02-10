@@ -67,7 +67,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .HasColumnName("NOTES");
 
         builder.Property(b => b.CreatedDate)
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("NOW()");
 
         builder.Property(b => b.IsActive)
             .HasDefaultValue(true);
