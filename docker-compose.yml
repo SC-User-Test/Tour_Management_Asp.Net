@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  tour-management:
+    build:
+      context: ./DotNetFrameworkProject_CE040_CE087
+      dockerfile: Tour_Management/Dockerfile
+    image: tour-management:latest
+    container_name: tour-management-app
+    ports:
+      - "8080:80"
+    environment:
+      - DB_CONNECTION_STRING=Data Source=your-sql-server;Initial Catalog=tourdb;User ID=sa;Password=YourPassword123;MultipleActiveResultSets=true
+      - ASPNET_ENVIRONMENT=Production
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "powershell", "-Command", "try { $response = Invoke-WebRequest -Uri http://localhost:80 -UseBasicParsing -TimeoutSec 5; exit 0 } catch { exit 1 }"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: nat

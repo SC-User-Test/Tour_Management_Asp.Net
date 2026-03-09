@@ -1,0 +1,49 @@
+# Build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.vspscc
+*.vssscc
+
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Database files
+App_Data/*.mdf
+App_Data/*.ldf
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+TempImageFiles/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Packages
+packages/
+*.nupkg
+
+# Test results
+TestResults/
+
+# Backup files
+*.bak
+*.backup

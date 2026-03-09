@@ -1,0 +1,145 @@
+{
+  "fixId": "container-fix-2026-03-09",
+  "summary": {
+    "blockersFixed": 6,
+    "blockersFailed": 2,
+    "filesModified": 4
+  },
+  "filesModified": [
+    {
+      "filePath": "DotNetFrameworkProject_CE040_CE087/Tour_Management/Web.config",
+      "changes": [
+        {
+          "lineNumber": 34,
+          "before": "<add name=\"dbconnection\" connectionString=\"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\gajer\\source\\repos\\Tour_Management\\Tour_Management\\App_Data\\tourdb.mdf;Integrated Security=True\" providerName=\"System.Data.SqlClient\"/>",
+          "after": "<add name=\"dbconnection\" connectionString=\"Server=#{DB_SERVER}#;Database=#{DB_NAME}#;User Id=#{DB_USER}#;Password=#{DB_PASSWORD}#;\" providerName=\"System.Data.SqlClient\"/>",
+          "blockerId": "blocker-3",
+          "description": "Replaced LocalDB connection string with containerized SQL Server connection using environment variable placeholders. LocalDB is Windows-specific and not available in containers."
+        },
+        {
+          "lineNumber": 38,
+          "before": "<add key=\"ChartImageHandler\" value=\"storage=file;timeout=20;dir=c:\\TempImageFiles\;\" />",
+          "after": "<add key=\"ChartImageHandler\" value=\"storage=file;timeout=20;dir=#{CHART_TEMP_PATH}#;\" />",
+          "blockerId": "blocker-4",
+          "description": "Replaced hardcoded Windows path with environment variable placeholder for chart image temporary directory."
+        },
+        {
+          "lineNumber": 39,
+          "before": "",
+          "after": "<add key=\"UploadPath\" value=\"#{UPLOAD_PATH}#\" />",
+          "blockerId": "blocker-5",
+          "description": "Added new appSetting for upload path configuration using environment variable placeholder to support container-based file storage."
+        }
+      ]
+    },
+    {
+      "filePath": "DotNetFrameworkProject_CE040_CE087/Tour_Management/AddTour.aspx.cs",
+      "changes": [
+        {
+          "lineNumber": 33,
+          "before": "FileUpload1.SaveAs(Server.MapPath(\"~/Tour_pics/\") + FileUpload1.FileName);",
+          "after": "string uploadPath = ConfigurationManager.AppSettings[\"UploadPath\"] ?? Server.MapPath(\"~/Tour_pics/\");\nFileUpload1.SaveAs(System.IO.Path.Combine(uploadPath, FileUpload1.FileName));",
+          "blockerId": "blocker-5",
+          "description": "Updated file upload to read path from configuration, allowing persistent volume or cloud storage path to be configured via environment variables. Falls back to original path if not configured."
+        }
+      ]
+    },
+    {
+      "filePath": "DotNetFrameworkProject_CE040_CE087/Tour_Management/Tour_Management.csproj",
+      "changes": [
+        {
+          "lineNumber": 186,
+          "before": "<Folder Include=\"pics\\\" />\n    <Folder Include=\"Tour_pics\\\" />",
+          "after": "<!-- NOTE: For containerization, Tour_pics and pics folders require persistent volume mounts -->\n    <Folder Include=\"pics\\\" />\n    <Folder Include=\"Tour_pics\\\" />",
+          "blockerId": "blocker-7",
+          "description": "Added comment documenting that these folders need persistent volume configuration in containerized deployments to prevent data loss."
+        },
+        {
+          "lineNumber": 204,
+          "before": "<IISUrl>https://localhost:44300/</IISUrl>",
+          "after": "<IISUrl>http://localhost:#{PORT}#/</IISUrl>",
+          "blockerId": "blocker-8",
+          "description": "Replaced hardcoded localhost URL and port with environment variable placeholder to support dynamic port configuration in containers."
+        }
+      ]
+    },
+    {
+      "filePath": "DotNetFrameworkProject_CE040_CE087/Tour_Management/Health.aspx",
+      "changes": [
+        {
+          "lineNumber": 0,
+          "before": "",
+          "after": "<%@ Page Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"Health.aspx.cs\" Inherits=\"Tour_Management.Health\" %>\n<%-- Health check endpoint for container orchestration --%>",
+          "blockerId": "blocker-6",
+          "description": "Created new health check page for container orchestration health and readiness probes."
+        }
+      ]
+    },
+    {
+      "filePath": "DotNetFrameworkProject_CE040_CE087/Tour_Management/Health.aspx.cs",
+      "changes": [
+        {
+          "lineNumber": 0,
+          "before": "",
+          "after": "using System;\nusing System.Configuration;\nusing System.Data.SqlClient;\nusing System.Web;\n\nnamespace Tour_Management\n{\n    public partial class Health : System.Web.UI.Page\n    {\n        protected void Page_Load(object sender, EventArgs e)\n        {\n            Response.Clear();\n            Response.ContentType = \"application/json\";\n            \n            try\n            {\n                // Check database connectivity\n                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[\"dbconnection\"].ConnectionString))\n                {\n                    conn.Open();\n                    conn.Close();\n                }\n                \n                Response.StatusCode = 200;\n                Response.Write(\"{\\\"status\\\":\\\"healthy\\\",\\\"timestamp\\\":\\\"\" + DateTime.UtcNow.ToString(\"o\") + \"\\\"}\");\n            }\n            catch (Exception ex)\n            {\n                Response.StatusCode = 503;\n                Response.Write(\"{\\\"status\\\":\\\"unhealthy\\\",\\\"error\\\":\\\"\" + ex.Message.Replace(\"\\\"\", \"'\") + \"\\\",\\\"timestamp\\\":\\\"\" + DateTime.UtcNow.ToString(\"o\") + \"\\\"}\");\n            }\n            \n            Response.End();\n        }\n    }\n}",
+          "blockerId": "blocker-6",
+          "description": "Created health check code-behind that verifies database connectivity and returns HTTP 200/503 status for container health monitoring."
+        }
+      ]
+    }
+  ],
+  "failedBlockers": [
+    {
+      "blockerId": "blocker-1",
+      "reason": "Requires architectural change to ASP.NET Core with Kestrel. .NET Framework Web Forms applications are fundamentally dependent on IIS system.webServer configuration including integrated pipeline handlers. Removing this section would break the application. This blocker can only be resolved through complete migration to ASP.NET Core, which is beyond minimal containerization fixes."
+    },
+    {
+      "blockerId": "blocker-2",
+      "reason": "Requires architectural change to ASP.NET Core project format. The UseIISExpress and related settings are integral to .NET Framework Web Application project structure. These settings cannot be removed without converting the entire project to ASP.NET Core format (.csproj SDK-style project). This blocker requires full application migration, not a minimal fix."
+    }
+  ],
+  "configurationRequired": [
+    {
+      "variable": "DB_SERVER",
+      "description": "SQL Server hostname or IP address for containerized database",
+      "example": "sqlserver-container:1433 or mydb.database.windows.net"
+    },
+    {
+      "variable": "DB_NAME",
+      "description": "Database name to connect to",
+      "example": "tourdb"
+    },
+    {
+      "variable": "DB_USER",
+      "description": "Database user for SQL Server authentication",
+      "example": "sa or dbuser"
+    },
+    {
+      "variable": "DB_PASSWORD",
+      "description": "Database password for SQL Server authentication",
+      "example": "YourStrong!Passw0rd"
+    },
+    {
+      "variable": "CHART_TEMP_PATH",
+      "description": "Directory path for temporary chart image files (must be writable)",
+      "example": "/tmp/charts or /app/temp/charts"
+    },
+    {
+      "variable": "UPLOAD_PATH",
+      "description": "Directory path for uploaded tour images (should be persistent volume mount)",
+      "example": "/app/uploads or /mnt/tour-pics"
+    },
+    {
+      "variable": "PORT",
+      "description": "Port number for the web application to listen on",
+      "example": "8080 or 80"
+    }
+  ],
+  "notes": [
+    "IMPORTANT: .NET Framework Web Forms applications require Windows containers with IIS. These fixes prepare the configuration for containerization but blocker-1 and blocker-2 indicate the application cannot run on Linux containers.",
+    "For Web.config environment variable substitution, use Web.config transformations (Web.Release.config) or replace #{VARIABLE}# tokens at deployment time using tools like tokenization in Azure DevOps or similar CI/CD pipelines.",
+    "The Health.aspx endpoint should be added to the project file and deployed. Access it at /Health.aspx for health checks.",
+    "Database migration required: Export data from LocalDB .mdf file and import to containerized SQL Server instance before deployment.",
+    "Persistent volumes must be configured in Docker/Kubernetes for: UPLOAD_PATH directory to retain uploaded tour images across container restarts."
+  ]
+}
