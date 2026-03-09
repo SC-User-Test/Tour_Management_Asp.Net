@@ -18,39 +18,28 @@ namespace Tour_Management
 
   
             protected void Btn_Submit(object sender, EventArgs e)
-            { 
-            
-               
-
-                SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString);
-                conn.Open();
-                string checkPasswordQuery = "select password from Userinfo where password='" + txtPassword.Text + "' and email = '" + txtEmail.Text + "'";
-                SqlCommand passComm = new SqlCommand(checkPasswordQuery, conn);
-            string password = passComm.ExecuteScalar()?.ToString() ?? "";
-
-
-              
-
-                if (password == txtPassword.Text)
+            {
+                // Use parameterized query to prevent SQL injection
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString))
                 {
-                    //Session["New"] = txtEmail.Text;
-                Response.Write("Password is correct");
-                
-                Response.Redirect("MainProfilePage.aspx");
-                    Server.Transfer(  "MainProfilePage.aspx");
+                    conn.Open();
+                    string checkPasswordQuery = "SELECT password FROM Userinfo WHERE email = @Email";
+                    using (SqlCommand passComm = new SqlCommand(checkPasswordQuery, conn))
+                    {
+                        passComm.Parameters.AddWithValue("@Email", txtEmail.Text);
+                        string password = passComm.ExecuteScalar()?.ToString() ?? "";
+
+                        if (!string.IsNullOrEmpty(password) && password == txtPassword.Text)
+                        {
+                            Session["UserEmail"] = txtEmail.Text;
+                            Response.Redirect("MainProfilePage.aspx");
+                        }
+                        else
+                        {
+                            Response.Write("Invalid email or password");
+                        }
+                    }
                 }
-
-
-            
-            else
-                {
-                    Response.Write("Password is not correct");
-                
-            }
-
-
-
-
             }
 
         protected void Btn_reg(object sender, EventArgs e)
