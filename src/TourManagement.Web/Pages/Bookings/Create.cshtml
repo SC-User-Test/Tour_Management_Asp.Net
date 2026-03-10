@@ -1,0 +1,50 @@
+@page
+@model BookingsCreateModel
+@{
+    ViewData["Title"] = "Book Tour";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2>Book Tour</h2>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger">@Model.ErrorMessage</div>
+        }
+
+        @if (Model.SuccessMessage != null)
+        {
+            <div class="alert alert-success">@Model.SuccessMessage</div>
+        }
+
+        <form method="post">
+            <input type="hidden" asp-for="Input.TourId" />
+
+            <div class="mb-3">
+                <label asp-for="Input.TourName" class="form-label"></label>
+                <input asp-for="Input.TourName" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.Place" class="form-label"></label>
+                <input asp-for="Input.Place" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" type="email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.FirstName" class="form-label"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Book Now</button>
+            <a asp-page="/Tours/Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
